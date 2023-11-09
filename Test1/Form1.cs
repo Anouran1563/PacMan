@@ -1,5 +1,7 @@
 ﻿using System.Windows.Forms;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Test1
 {
@@ -20,6 +22,7 @@ namespace Test1
         {
             InitializeComponent();
             lblOver.Visible = false;
+            lblWon.Visible = false;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -108,7 +111,7 @@ namespace Test1
             {
                 ghost2 = -ghost2;
             }
-            foreach (Control x in pbPlayer.Controls)
+            foreach (Control x in this.Controls)
             {
                 if (x is PictureBox && x.Tag == "wall" || x.Tag == "ghost")
                 {
@@ -119,6 +122,10 @@ namespace Test1
                         lblOver.Text = "Game Over";
                         lblOver.Visible = true;
                         GameTimer.Stop();
+                        foreach (var c in GetControls<PictureBox>(this))
+                        {
+                            c.Visible = false;
+                        }
                     }
                 }
                 if (x is PictureBox && x.Tag == "coin")
@@ -127,6 +134,16 @@ namespace Test1
                     {
                         this.Controls.Remove(x);
                         score++;
+                    }
+                }
+                if(score == 18)
+                {
+                    lblWon.Text = "You Won";
+                    lblWon.Visible = true;
+                    
+                    foreach(var c in GetControls<PictureBox>(this))
+                    {
+                        c.Visible = false;
                     }
                 }
             }
@@ -145,6 +162,11 @@ namespace Test1
             {
                 ghost3y = -ghost3y;
             }
+        }
+
+        public IEnumerable<T> GetControls<T>(Control c)
+        {
+            return c.Controls.OfType<T>();
         }
     }
 }
